@@ -10,13 +10,31 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
 
-    <title>Document</title>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script
-  src="https://code.jquery.com/jquery-3.6.0.min.js"
-  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-  crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="/css/indexcss.css">
+           
+            <style>
+     body{
     
+   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url(/images/art-and-craft.jpg);
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+      @media all and (min-width: 992px) {
+	.navbar .nav-item .dropdown-menu{ display: none; }
+	.navbar .nav-item:hover .nav-link{   }
+	.navbar .nav-item:hover .dropdown-menu{ display: block; }
+	.navbar .nav-item .dropdown-menu{ margin-top:0; }
+}
+
+
+      .navbar{
+           background-color: rgba(0,0,0,0.3);
+       }
+       .btn btn-primary,.btn-block{
+            box-shadow: 10px 10px 5px rgb(14, 3, 3);
+        }
+     </style>
     
     
     <script th:inline="javascript">
@@ -31,10 +49,10 @@
 	$.ajax(
 		{
 			url: "/create_order",
-			data:JSON.stringify({amount:amount,info:'order_request'}),
-			contentType:'application/json',
-			type:'POST',
-			dataType:'json',
+			data:JSON.stringify({amount:amount, info:"order_request"}),
+			contentType:"application/json",
+			type:"POST",
+			dataType:"json",
 			success:function(response){
 				console.log(response);
 			if(response.status == "created")
@@ -42,19 +60,24 @@
 				//open form
 				
 				let options={
-					key:'rzp_test_CJoqrREIYW9UcT',
+					key:"rzp_test_CJoqrREIYW9UcT",
 					amount:response.amount,
-					currency:'INR',
-					name:'E-ArtHeritage',
-					description: 'Handicrafts',
-					image:'http://localhost:9090/images/logo.png',
+					currency:"INR",
+					name:"E-ArtHeritage",
+					description: "Handicrafts",
+					image:"http://localhost:9090/images/logo.png",
 					order_id:response.id,
 					handler:function(response){
 						console.log(response.razorpay_payment_id);
 						console.log(response.razorpay_order_id);
-						console.log(razorpay_signature);
+						console.log(response.razorpay_signature);
 						console.log("payment successful!!");
-						alert("payment successful!!");
+						//alert("payment successful!!");
+						
+						updatePaymentOnServer(response.razorpay_payment_id,response.razorpay_order_id,"paid");
+						
+						
+						
 					},
 					
 					"prefill": {
@@ -71,8 +94,8 @@
 					},
 				};
 				
-			var rzp1 = new Razorpay(options);
-rzp1.on('payment.failed', function (response){
+			let rzp= new Razorpay(options);
+rzp.on("payment.failed", function (response){
 console.log(response.error.code);
 console.log(response.error.description);
 console.log(response.error.source);
@@ -80,9 +103,13 @@ console.log(response.error.step);
 console.log(response.error.reason);
 console.log(response.error.metadata.order_id);
 console.log(response.error.metadata.payment_id);
-alert("Payment fail");
+swal("Failed !!", "Oops payment failed !!", "error");
 });
-			rpz1.open();	
+
+
+
+
+			rzp.open();	
 			}
 				
 			},
@@ -96,7 +123,24 @@ alert("Payment fail");
 };
     
     
-    
+  function updatePaymentOnServer(payment_id,order_id,status)
+   {
+	$.ajax({
+		url: "/user/update_order",
+			data:JSON.stringify({payment_id:payment_id,order_id:order_id,status:status,}),
+			contentType:"application/json",
+			type:"POST",
+			dataType:"json",
+			success:function(response){
+										swal("Good job!", "congrates !! Payment successful !!", "success");
+
+			},
+			error: function(error) {
+						swal("Failed !!", "Your payment is successful , but we did not get it on server, we will contact you as soon as possible"," error");
+
+			},
+	});
+}
     
     
     </script>
@@ -106,42 +150,38 @@ alert("Payment fail");
 <body>
 
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light" >
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <img th:src="@{/images/logo.png}"  src="../static/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto"></ul>
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/}" href="#">home</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/shop}" href="#">shop</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}" href="#">login</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">logout</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/cart}" href="#">cart</a>
-                </li>
-                <li class="nav-item active">
-                    <span class="nav-link" th:text="${cartCount}">0</span>
-                </li>
-            </ul>
 
+<nav class="navbar navbar-expand-md bg-light navbar-dark fixed-top scrolled  ">
+		<div class="container">
+        	<a >
+           <h3 >E-Art HERITAGE<h3>
+		
+             </a>
+		
+             
+             
+             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsenavbar">
+             <span class="navbar-toggler-icon">  </span>
+             </button>
+             <div class="collapse navbar-collapse navhover text-center" id="collapsenavbar">
+               <ul class="navbar-nav  ml-auto">
+             <li class="nav-item navb"> <a th:href="@{/}" href="#" class="nav-link text-dark"> Home </a> </li>
+             <li class="nav-item navb "> <a th:href="@{/shop}" href="#" class="nav-link text-dark"> Shop </a> </li>
+             <li class="nav-item navb"> <a sec:authorize="isAnonymous()" th:href="@{/login}" href="#" class="nav-link text-dark "> Login </a> </li>
+              <li class="nav-item navb"><a class="nav-link text-dark" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">Logout</a>
+                </li>
+             <li class="nav-item navb"> <a sec:authorize="isAnonymous()" th:href="@{/register}" href="#" class="nav-link text-dark"> Sign_up </a> </li>
+             <li class="nav-item navb"> <a th:href="@{/cart}" href="#" class="nav-link text-dark"> Cart </a> </li>
+              <li class="nav-item navb"> <a  href="#" class="nav-link text-dark" th:text="${cartCount}"> 0 </a> </li>
+             </ul>
+             
+             <div>
+             
+             
         </div>
-    </div>
-</nav>
-<div class="container">
+	</nav>
+<div class="container" style="margin-top: 10%;">
 
     <!--Section: Block Content-->
     <section class="mt-5 mb-4">
@@ -150,110 +190,11 @@ alert("Payment fail");
         <div class="row">
 
             <!--Grid column-->
-            <div class="col-lg-8 mb-4">
-
-                <!-- Card -->
-                <div class="card wish-list pb-1">
-                    <div class="card-body">
-
-                        <h5 class="mb-2">Billing details</h5>
-
-                        <!-- Grid row -->
-                        <div class="row">
-
-                            <!-- Grid column -->
-                            <div class="col-lg-6">
-
-                                <!-- First name -->
-                                <div class="md-form md-outline mb-0 mb-lg-4">
-                                    <label for="firstName">First name</label>
-                                    <input type="text" id="firstName" required class="form-control mb-0 mb-lg-2">
-                                </div>
-
-                            </div>
-                            <!-- Grid column -->
-
-                            <!-- Grid column -->
-                            <div class="col-lg-6">
-
-                                <!-- Last name -->
-                                <div class="md-form md-outline">
-                                    <label for="lastName">Last name</label>
-                                    <input type="text" id="lastName" required class="form-control">
-                                </div>
-
-                            </div>
-                            <!-- Grid column -->
-
-                        </div>
-                        <!-- Grid row -->
-
-
-
-                        <!-- Country -->
-                        <div class="d-flex flex-wrap">
-                            <div class="select-outline position-relative w-100">
-                                <label>Country - <strong>INDIA</strong></label>
-
-
-                            </div>
-                        </div>
-
-                        <!-- Address Part 1 -->
-                        <div class="md-form md-outline mt-2">
-                            <label for="form14">Address (Line 1)</label>
-                            <input type="text" required id="form14" placeholder="House number and street name" class="form-control">
-                        </div>
-
-                        <!-- Address Part 2 -->
-                        <div class="md-form md-outline mt-2">
-                            <label for="form15">Address (Line 2)</label>
-                            <input type="text" id="form15" placeholder="Apartment, suite, unit etc. (optional)"
-                                   class="form-control">
-                        </div>
-
-                        <!-- Postcode / ZIP -->
-                        <div class="md-form md-outline mt-3">
-                            <label for="form16">Postcode / ZIP</label>
-                            <input type="text" maxlength="6" minlength="6" required id="form16" class="form-control">
-                        </div>
-
-                        <!-- Town / City -->
-                        <div class="md-form md-outline mt-2">
-                            <label for="form17">Town / City</label>
-                            <input type="text" required id="form17" class="form-control">
-
-                        </div>
-
-                        <!-- Phone -->
-                        <div class="md-form md-outline mt-2">
-                            <label for="form18">Phone</label>
-                            <input type="number" minlength="10" maxlength="10" required id="form18" class="form-control">
-                        </div>
-
-                        <!-- Email address -->
-                        <div class="md-form md-outline mt-2">
-                            <label for="form19">Email address</label>
-                            <input type="email" required id="form19" class="form-control">
-                        </div>
-
-                        <!-- Additional information -->
-                        <div class="md-form md-outline mt-2">
-                            <label for="form76">Additional information</label>
-                            <textarea id="form76" class="md-textarea form-control" rows="4"></textarea>
-                        </div>
-
-
-
-                    </div>
-                </div>
-                <!-- Card -->
-
-            </div>
+            
             <!--Grid column-->
 
             <!--Grid column-->
-            <div class="col-lg-4">
+            <div class="col-lg">
 
                 <!-- Card -->
                 <div class="card mb-4">
@@ -281,34 +222,16 @@ alert("Payment fail");
                             </li>
                         </ul>
 
-                        <form  >
+                      
                             <button onclick="paymentStart()" type="submit"  class="btn btn-primary btn-block waves-effect waves-light">Pay Now</button>
-                        </form>
+
 
                     </div>
                 </div>
                 <!-- Card -->
 
                 <!-- Card -->
-                <div class="card mb-4">
-                    <div class="card-body">
-
-                        <a class="dark-grey-text d-flex justify-content-between" data-toggle="collapse" href="#collapseExample"
-                           aria-expanded="false" aria-controls="collapseExample">
-                            Add a discount code (optional)
-                            <span><i class="fas fa-chevron-down pt-1"></i></span>
-                        </a>
-
-                        <div class="collapse" id="collapseExample">
-                            <div class="mt-3">
-                                <div class="md-form md-outline mb-0">
-                                    <input type="text" id="discount-code" class="form-control font-weight-light"
-                                           placeholder="Enter discount code">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
                 <!-- Card -->
 
             </div>
@@ -324,8 +247,15 @@ alert("Payment fail");
 </div>
 
 
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
+  <script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+    
 
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>

@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
-				.antMatchers("/","/shop/**","/register", "/mysql-console/**").permitAll()
+				.antMatchers("/","/shop/**","/register","/forgot_email_form/**","/password_change_form","/send-otp","/change-password","/verify-otp","/verify_otp", "/mysql-console/**").permitAll()
 				.antMatchers("/admin/**").hasRole("ADMIN")
 				.antMatchers("/vendor/**").hasRole("VENDOR")
 				.anyRequest()

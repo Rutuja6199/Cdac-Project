@@ -11,7 +11,195 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <title>Document</title>
+           <link rel="stylesheet" href="/css/indexcss.css">
+           
+            <style>
+     body{
+    
+   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url(/images/art-and-craft.jpg);
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+      @media all and (min-width: 992px) {
+	.navbar .nav-item .dropdown-menu{ display: none; }
+	.navbar .nav-item:hover .nav-link{   }
+	.navbar .nav-item:hover .dropdown-menu{ display: block; }
+	.navbar .nav-item .dropdown-menu{ margin-top:0; }
+}
+
+
+      .navbar{
+           background-color: rgba(0,0,0,0.3);
+       }
+       .btn btn-primary,.btn-block{
+            box-shadow: 10px 10px 5px rgb(14, 3, 3);
+        }
+     </style>
+</head>
+<body>
+
+
+<nav class="navbar navbar-expand-md bg-light navbar-dark fixed-top scrolled  ">
+		<div class="container">
+        	<a >
+           <h3 >E-Art HERITAGE<h3>
+		
+             </a>
+		
+             
+             
+             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsenavbar">
+             <span class="navbar-toggler-icon">  </span>
+             </button>
+             <div class="collapse navbar-collapse navhover text-center " id="collapsenavbar">
+             <ul class="navbar-nav  ml-auto">
+             <li class="nav-item navb"> <a th:href="@{/}" href="#" class="nav-link text-dark"> Home </a> </li>
+             <li class="nav-item navb "> <a th:href="@{/shop}" href="#" class="nav-link text-dark"> Shop </a> </li>
+             <li class="nav-item navb"> <a sec:authorize="isAnonymous()" th:href="@{/login}" href="#" class="nav-link text-dark "> Login </a> </li>
+              <li class="nav-item navb"><a class="nav-link text-dark" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">Logout</a>
+                </li>
+             <li class="nav-item navb"> <a sec:authorize="isAnonymous()" th:href="@{/register}" href="#" class="nav-link text-dark"> Sign_up </a> </li>
+             <li class="nav-item navb"> <a th:href="@{/cart}" href="#" class="nav-link text-dark"> Cart </a> </li>
+              <li class="nav-item navb"> <a  href="#" class="nav-link text-dark" th:text="${cartCount}"> 0 </a> </li>
+             </ul>
+             
+             <div>
+             
+             
+        </div>
+	</nav>
+
+<div class="container" style="margin-top: 100px" >
+    <div class="row">
+        <div class="col-sm-3">
+            <h4 class="text-light">Categories</h4>
+            <ul class="list-group">
+                <a th:href="@{/shop}"><li class="list-group-item">All Products</li></a>
+                <a href="" th:each="category, iStat : ${categories}"
+                   th:href="@{/shop/category/{id}(id=${category.id})}"><li
+                               class="list-group-item" th:text="${category.name}"></li></a>
+
+            </ul>
+        </div>
+        <div class="col-sm-9">
+            <div class="card" style="margin-top: 20px" th:each="product : ${products}">
+                <div class="row no-gutters">
+                    <div class="col-sm-5 d-flex justify-content-center">
+                        <img class="" height="150px" width="150px" th:src="@{${'/productImages/' + product.imagename}}" th:alt="${product.name}">
+                    </div>
+                    <div class="col-sm-7 d-flex justify-content-center">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${product.name}"></h5>
+                            <h4>₹ <span th:text="${product.price}"></span></h4>
+                            <p th:text="${product.description}" >Suresh Dasari is a founder and technical lead developer in tutlane.</p>
+                            <a href="#" th:href="@{/shop/viewproduct/{id}(id=${product.id})}" class="btn btn-primary">View Product</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+	<script>
+    $(window).scroll(function(){
+    $('nav').toggleClass('scrolled', $(this).scrollTop() > 50);
+    }); 
+    
+ 
+
+
+$(document).ready(function(){       
+            var scroll_pos = 0;
+            $(document).scroll(function() { 
+                scrolled= $(this).scrollTop();
+                if(scrolled > 10) {
+                    
+                    $("nav a").css('color', 'black');
+                } else {
+                  
+                    $("nav a").css('color', 'black');
+                }
+            });
+        });
+
+
+
+    </script>
+
+<script>
+  AOS.init();
+</script>
+
+
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+ 
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+<!--    <title>Document</title>
 </head>
 <body>
 
@@ -93,5 +281,5 @@
   crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-</body>
+</body>-->
 </html>

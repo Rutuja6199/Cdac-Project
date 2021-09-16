@@ -26,6 +26,11 @@ public class UserService {
 	{
 		return userRepository.findById(id);
 	}
+
+
+	
+	
+	
 //	public List<User> getAllUserByCategoryId(int id)
 //	{
 //		return userRepository.findAllByRole_Id(id);

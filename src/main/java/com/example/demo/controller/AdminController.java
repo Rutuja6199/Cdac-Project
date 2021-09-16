@@ -86,7 +86,7 @@ public class AdminController {
 	@GetMapping("/users/roles/{id}")
 	public String getUserByRole(Model model,@PathVariable int id) {
 		model.addAttribute("role",roleService.getAllRoles());
-		model.addAttribute("user",userService.getUserById(id));
+	 model.addAttribute("user",userService.getUserById(id));
 		return "users";
 	}
 	
